@@ -58,14 +58,16 @@ class PostController extends Controller
         $new_post = new Post();
 
         // GEN SLUG UNIVOCO
+        //title-lorem-n
         $slug = Str::slug($data['title'], '-');
         $count = 1;
+        $base_slug = $slug;
 
         // eseguo il ciclo se ho trovato un post con lo SLUG uguale
         while(Post::where('slug', $slug)->first()) {
 
             //gen un nuovo slug con contatore
-            $slug .= '-' . $count;
+            $slug = $base_slug . '-' . $count;
             $count++;
         }
 
