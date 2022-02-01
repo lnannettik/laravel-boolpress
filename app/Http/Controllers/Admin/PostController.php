@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use App\Post;
 
 class PostController extends Controller
@@ -27,7 +28,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        
+         return view('admin.posts.create');
     }
 
     /**
@@ -38,18 +39,59 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // VALIDAZIONE
+        //1. param = regole validazione
+        //2 param = error message custom
+
+        $request->validate([
+            'title' => 'required|max:255',
+            'content' => 'required'
+        ], [
+            'required' => 'The :attribute is a required filed!',
+            'max' => 'Max :max characters allowed for the :attribute',
+        ]);
+
+        $data = $request->all();
+        dump($data);
+
+        // CREA NUOVO POST
+        $new_post = new Post();
+
+        // GEN SLUG UNIVOCO
+        $slug = Str::slug($data['title'], '-');
+        $count = 1;
+
+        // eseguo il ciclo se ho trovato un post con lo SLUG uguale
+        while(Post::where('slug', $slug)->first()) {
+
+            //gen un nuovo slug con contatore
+            $slug .= '-' . $count;
+            $count++;
+        }
+
+        $data['slug'] = $slug;
+
+        $new_post->fill($data); // <- FILLABLE
+        $new_post->save();
+
+        return redirect()->route('admin.posts.show', $new_post->slug);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  string  $slug
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($slug)
     {
-        //
+        $post = Post::where('slug', $slug)->first();
+
+        if(! $post) {
+            abort(404);
+        }
+
+        return view('admin.posts.show', compact('post'));
     }
 
     /**
