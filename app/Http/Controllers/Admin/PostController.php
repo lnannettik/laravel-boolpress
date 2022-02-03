@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Post;
+use App\Category;
 
 class PostController extends Controller
 {
@@ -22,17 +23,20 @@ class PostController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Show the form for creating a new resource.      // -------------------------------- CREATE ------------------------------------//
      *
      * @return \Illuminate\Http\Response
      */
     public function create()
+
     {
-         return view('admin.posts.create');
+        $categories = Category::all();
+
+        return view('admin.posts.create', compact('categories'));
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created resource in storage.                      //----------------------------- STORE --------------------------------//
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -80,7 +84,7 @@ class PostController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified resource.                //----------------------------- SHOW --------------------------------//
      *
      * @param  string  $slug
      * @return \Illuminate\Http\Response
@@ -88,6 +92,7 @@ class PostController extends Controller
     public function show($slug)
     {
         $post = Post::where('slug', $slug)->first();
+
 
         if(! $post) {
             abort(404);
@@ -97,7 +102,7 @@ class PostController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Show the form for editing the specified resource.         //------------------- EDIT ---------------------------------------//
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
@@ -105,16 +110,17 @@ class PostController extends Controller
     public function edit($id)
     {
         $post = Post::find($id);
+        $categories = Category::all();
 
         if(! $post) {
             abort(404);
         }
 
-        return view('admin.posts.edit', compact('post'));
+        return view('admin.posts.edit', compact('post', 'categories'));
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified resource in storage.         //-------------------------------- UPDATE ---------------------------------//
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
@@ -189,7 +195,8 @@ class PostController extends Controller
     private function validation_rules() {
         return [
             'title' => 'required|max:255',
-            'content' => 'required'
+            'content' => 'required',
+            'category_id' => 'nullable|exists:categories,id'
         ];
     }
 
@@ -197,6 +204,7 @@ class PostController extends Controller
         return [
             'required' => 'The :attribute is a required filed!',
             'max' => 'Max :max characters allowed for the :attribute',
+            'category_id.exists' => 'the selected category does not exist',
         ];
     }
 

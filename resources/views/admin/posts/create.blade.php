@@ -13,7 +13,7 @@
             </ul>
         </div>
     @endif
-
+ 
 
     <form action="{{ route('admin.posts.store') }}" method="POST">
     @csrf
@@ -32,6 +32,28 @@
         @error('content')
             <div class="text-danger">{{ $message }}</div>
         @enderror
+
+    </div>
+
+    {{-- CATEGORIES --}}
+    <div class="mb-3">
+        <label for="category_id">Category</label>
+        <select class="form-control" name="category_id" id="category_id">
+
+            <option value="">Uncategorized</option>
+
+            @foreach ($categories as $category)
+                <option value="{{ $category->id }}"
+                    @if ($category->id == old('category_id')) selected @endif>
+                    {{ $category->name }}
+                </option>
+            @endforeach
+            
+        </select>
+        @error('category_id')
+            <div class="text-danger">{{ $message }}</div>
+        @enderror
+
 
     </div>
 
