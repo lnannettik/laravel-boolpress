@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Route;
 
 
 //ROTTE PER AUTENTICAZIONE
+
 Auth::routes();
 
 

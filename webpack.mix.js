@@ -11,6 +11,9 @@ const mix = require('laravel-mix');
  |
  */
 
+
+// ------------ RICORDA di runnare npm run watch ad ogni modifica di questo file!!! --------------- //
+
 mix.js('resources/js/app.js', 'public/js')
     .js('resources/js/front-office.js', 'public/js')
     .sass('resources/sass/app.scss', 'public/css');
